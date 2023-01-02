@@ -3,26 +3,26 @@ const mongoose = require("mongoose")
 const blogSchema = new mongoose.Schema({
     title: {
         type: String,
-        require: true,
+        required: true,
         trim: true
     },
     body: {
         type: String,
-        require: true
+        required: true
     },
     authorId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Author'
     },
     tags: {
-        type: [String],
-        category: {
-            type: String,
-            require: true,
-            subcategory: {
-                type: [String]
-            }
-        },
+        type: [String]
+    },
+    category: {
+        type: String,
+        required: true
+    },
+    subcategory: {
+        type: [String]
     },
     isDeleted: {
         type: Boolean,

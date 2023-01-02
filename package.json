@@ -4,7 +4,7 @@
   "description": "Blog Project",
   "main": "index.js",
   "scripts": {
-    "test": "start: node src/index.js"
+    "test": "node src/index.js"
   },
   "repository": {
     "type": "git",
@@ -18,6 +18,7 @@
   "homepage": "https://github.com/vpalve07/blogGroup17#readme",
   "dependencies": {
     "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.8.2"
   }
 }
