@@ -1,0 +1,23 @@
+{
+  "name": "bloggroup17",
+  "version": "1.0.0",
+  "description": "Blog Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "start: node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vpalve07/blogGroup17.git"
+  },
+  "author": "Vinayak,Chandrashekhar,Tushar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vpalve07/blogGroup17/issues"
+  },
+  "homepage": "https://github.com/vpalve07/blogGroup17#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^6.8.2"
+  }
+}
