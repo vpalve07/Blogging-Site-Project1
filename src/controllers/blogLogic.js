@@ -6,9 +6,9 @@ const author = async function (req, res) {
     try {
         let data = req.body
         let createdAuthor = await authorModel.create(data)
-        res.status(201).send({ data: createdAuthor })
+        res.status(201).send({ status: true, data: createdAuthor })
     } catch (error) {
-        res.status(400).send({ errorType: error.name, errorMsg: error.message })
+        res.status(400).send({ status: false, errorType: error.name, errorMsg: error.message })
     }
 }
 
@@ -17,12 +17,12 @@ const blog = async function (req, res) {
         let data = req.body
         let authorId = data.authorId
         let checkId = await authorModel.findById(authorId)
-        if (!checkId) return res.status(400).send({ invalidId: "authorId id is Invalid" })
+        if (!checkId) return res.status(400).send({ status: false, invalidId: "authorId id is Invalid" })
         let createdBlog = await blogModel.create(data)
-        res.status(201).send({ DocCreated: createdBlog })
+        res.status(201).send({ status: true, DocCreated: createdBlog })
     }
     catch (error) {
-        res.status(400).send({ errorType: error.name, errorMsg: error.message })
+        res.status(400).send({ status: false, errorType: error.name, errorMsg: error.message })
     }
 }
 
@@ -31,11 +31,11 @@ const getBlogs = async function (req, res) {
     try {
         let queryParams = req.query
         let blogs = await blogModel.find({ $and: [{ isDeleted: false }, { isPublished: true }, queryParams] })
-        if (blogs.length == 0) return res.status(404).send({ Status: false, msg: "Blogs doesn't exist" })
-        res.status(200).send({ ActiveBlogs: blogs })
+        if (blogs.length == 0) return res.status(404).send({ status: false, Status: false, msg: "Blogs doesn't exist" })
+        res.status(200).send({ status: true, ActiveBlogs: blogs })
     }
     catch (error) {
-        res.status(500).send({ errorType: error.name, errorMsg: error.message })
+        res.status(500).send({ status: false, errorType: error.name, errorMsg: error.message })
     }
 }
 
@@ -59,14 +59,39 @@ const updateBlog = async function (req, res) {
         }
         if (data.title || data.body) {
             let updateDoc = await blogModel.findOneAndUpdate({ _id: blogId }, { title: data.title, body: data.body }, { new: true })
-            if (!updateDoc) return res.status(400).send({ Null: "Doc not find" })
+            if (!updateDoc) return res.status(400).send({ status: false, Null: "Doc not find" })
         }
         let newUpdatedDoc = await blogModel.findById(blogId)
-        res.status(200).send({UpdatedDoc:newUpdatedDoc})
+        if (newUpdatedDoc.isPublished == false) {
+            let updateIsPublished = await blogModel.findOneAndUpdate({ _id: blogId }, { isPublished: true, publishedAt: Date.now() })
+            return res.status(200).send({ status: true, UpdatedDoc: updateIsPublished })
+        }
+        res.status(200).send({ status: true, UpdatedDoc: newUpdatedDoc })
     } catch (error) {
-        res.status(500).send({ errorType: error.name, errorMsg: error.message })
+        res.status(500).send({ status: false, errorType: error.name, errorMsg: error.message })
     }
 }
 
 
-module.exports = { author, blog, getBlogs, updateBlog }
+const deleteBlog = async function (req, res) {
+    try {
+        let blogId = req.params.blogId
+        let deleteDoc = await blogModel.findOneAndUpdate({ _id: blogId }, { deletedAt: Date.now(), isDeleted: true }, { new: true })
+        res.status(200).send({ status: true, DeletedDoc: deleteDoc })
+    } catch (error) {
+        res.status(500).send({ status: false, ErrorType: error.name, ErrorMsg: error.message })
+    }
+}
+
+const deleteByQuery = async function (req, res) {
+    try {
+        let queryParams = req.query
+        let deleteDoc = await blogModel.findOneAndUpdate({ $or: [queryParams, { tags: queryParams.tags }, { subcategory: queryParams.subcategory }] }, { deletedAt: Date.now(), isDeleted: true }, { new: true })
+        if (!deleteDoc) return res.status(404).send({ status: false, msg: "Document not found" })
+        return res.status(200).send({ status: true, deletedDoc: deleteDoc })
+    } catch (error) {
+        res.status(500).send({ status: false, ErrorType: error.name, ErrorMsg: error.message })
+    }
+}
+
+module.exports = { author, blog, getBlogs, updateBlog, deleteBlog, deleteByQuery }

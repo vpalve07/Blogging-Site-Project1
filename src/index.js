@@ -5,14 +5,14 @@ const app = express()
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 mongoose.set('strictQuery', false);
-mongoose.connect("mongodb+srv://blogGroup17:blogGroup17@cluster0.lbcnqhr.mongodb.net/group17Database",{
+mongoose.connect("mongodb+srv://blogGroup17:blogGroup17@cluster0.lbcnqhr.mongodb.net/group17Database", {
     useNewUrlParser: true
 })
-.then(() =>console.log("MongoDB is connected"))
-.catch(err=>console.log(err))
+    .then(() => console.log("MongoDB is connected"))
+    .catch(err => console.log(err))
 
-app.use("/",route)
+app.use("/", route)
 
-app.listen(3000,function(){
+app.listen(3000, function () {
     console.log("Express app running on port 3000")
 })
