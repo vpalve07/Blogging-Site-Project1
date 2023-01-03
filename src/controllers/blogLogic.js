@@ -76,8 +76,8 @@ const updateBlog = async function (req, res) {
 const deleteBlog = async function (req, res) {
     try {
         let blogId = req.params.blogId
-        let deleteDoc = await blogModel.findOneAndUpdate({ _id: blogId }, { deletedAt: Date.now(), isDeleted: true }, { new: true })
-        res.status(200).send({ status: true, DeletedDoc: deleteDoc })
+        let deleteDoc = await blogModel.findOneAndUpdate({ _id: blogId, isDeleted: false }, { deletedAt: Date.now(), isDeleted: true }, { new: true })
+        res.status(200).send({ status: true, msg: "Document deleted successfully" })
     } catch (error) {
         res.status(500).send({ status: false, ErrorType: error.name, ErrorMsg: error.message })
     }
