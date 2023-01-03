@@ -9,7 +9,7 @@ router.get("/test-me",function(req,res){
 
 
 router.post("/author", emailValidate, author)
-router.post("/blog", authorId, blog)
+router.post("/blogs", authorId, blog)
 router.get("/blogs",getBlogs)
 router.put("/blogs/:blogId",updateBlog)
 

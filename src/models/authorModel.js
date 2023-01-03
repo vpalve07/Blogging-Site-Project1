@@ -3,13 +3,11 @@ const mongoose = require('mongoose')
 const authorSchema = new mongoose.Schema({
     fname: {
         type: String,
-        required: true,
-        trim: true
+        required: true
     },
     lname: {
         type: String,
-        required: true,
-        trim: true
+        required: true
     },
     title: {
         type: String,
@@ -19,7 +17,6 @@ const authorSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        trim: true,
         unique: true
     },
     password: {
