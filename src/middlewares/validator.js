@@ -52,7 +52,7 @@ const authorizeAuthorUpdateDelete = async function (req, res, next) {
     let token = req.headers['x-api-key']
     let decodeToken = jwt.verify(token, "blogGroup17")
     let findAuthor = await blogModel.findById(blogId)
-    if (!findAuthor) return res.status(403).send({ status: false, msg: "BlogId is invalid" })
+    if (!findAuthor) return res.status(404).send({ status: false, msg: "Blog not found" })
     if (decodeToken.authorId == findAuthor.authorId) next()
     else { return res.status(403).send({ status: false, msg: "You are not authorized to do this task" }) }
 
