@@ -40,22 +40,22 @@ const validateToken = function (req, res, next) {
     }
 }
 
-const authorizeAuthorCreate =  function(req,res,next){
+const authorizeAuthorCreate = function (req, res, next) {
     let token = req.headers['x-api-key']
-    let decodeToken = jwt.verify(token,"blogGroup17")
-    if(decodeToken.authorId!==req.body.authorId) return res.status(403).send({status:false, msg:"You are not authorized to do this task"})
+    let decodeToken = jwt.verify(token, "blogGroup17")
+    if (decodeToken.authorId !== req.body.authorId) return res.status(403).send({ status: false, msg: "You are not authorized to do this task" })
     next()
 }
 
-const authorizeAuthorUpdateDelete = async function(req,res,next){
+const authorizeAuthorUpdateDelete = async function (req, res, next) {
     let blogId = req.params.blogId
     let token = req.headers['x-api-key']
-    let decodeToken = jwt.verify(token,"blogGroup17")
+    let decodeToken = jwt.verify(token, "blogGroup17")
     let findAuthor = await blogModel.findById(blogId)
-    if(!findAuthor) return res.status(403).send({status:false , msg:"BlogId is invalid"})
-    if(decodeToken.authorId==findAuthor.authorId) next()
-    else{return res.status(403).send({status:false, msg:"You are not authorized to do this task"})}
-    
+    if (!findAuthor) return res.status(403).send({ status: false, msg: "BlogId is invalid" })
+    if (decodeToken.authorId == findAuthor.authorId) next()
+    else { return res.status(403).send({ status: false, msg: "You are not authorized to do this task" }) }
+
 }
 
-module.exports = { emailValidate, authorId, blogId, validateToken, authorizeAuthorCreate, authorizeAuthorUpdateDelete}
+module.exports = { emailValidate, authorId, blogId, validateToken, authorizeAuthorCreate, authorizeAuthorUpdateDelete }

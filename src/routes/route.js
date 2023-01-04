@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { emailValidate, authorId, blogId, validateToken , authorizeAuthorCreate, authorizeAuthorUpdateDelete } = require('../middlewares/validator')
+const { emailValidate, authorId, blogId, validateToken, authorizeAuthorCreate, authorizeAuthorUpdateDelete } = require('../middlewares/validator')
 const { author, blog, getBlogs, updateBlog, deleteBlog, deleteByQuery, login } = require('../controllers/blogLogic')
 
 router.get("/test-me", function (req, res) {

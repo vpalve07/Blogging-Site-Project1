@@ -112,12 +112,12 @@ const deleteByQuery = async function (req, res) {
     try {
         const result = req.query;
         const deleteBlog = await blogModel.findOneAndUpdate(
-          { ...result, isDeleted: false },
-          { $set: { deletedAt: Date.now(), isDeleted: true } },
-          { new: true }
+            { ...result, isDeleted: false },
+            { $set: { deletedAt: Date.now(), isDeleted: true } },
+            { new: true }
         );
         if (!deleteBlog)
-          return res.status(404).send({ status: false, msg: "docs not found" });
+            return res.status(404).send({ status: false, msg: "docs not found" });
         res.status(200).send({ status: true, Msg: "Doc deleted successfully" });
     } catch (error) {
         res.status(500).send({ status: false, ErrorType: error.name, ErrorMsg: error.message })
