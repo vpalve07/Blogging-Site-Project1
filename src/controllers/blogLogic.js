@@ -73,6 +73,7 @@ const updateBlog = async function (req, res) {
         let subArr = findBlog.subcategory
         if (data.subcategory) subArr.push(data.subcategory)
         let updateBlog = await blogModel.findOneAndUpdate({ _id: req.params.blogId, isDeleted:false }, { $set: { title: data.title, body: data.body, tags: tagsArr, subcategory: subArr } }, { new: true })
+        if(!updateBlog) return res.status(404).send({status:false,msg:"Document not found for update"})
         res.status(200).send({ status: true, UpdatedDoc: updateBlog })
     } catch (error) {
         res.status(500).send({ status: false, errorType: error.name, errorMsg: error.message })
