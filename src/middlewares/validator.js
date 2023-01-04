@@ -15,6 +15,7 @@ const emailValidate = function (req, res, next) {
 
 const authorId = function (req, res, next) {
     let data = req.body
+    if (Object.keys(data) == 0) return res.status(404).send({ status: false, msg: "request body cant be empty" })
     let authorId = data.authorId
     if (!mongoose.isValidObjectId(authorId)) return res.status(400).send({ status: false, IdAbsent: "authorId is not Valid" })
     next()
