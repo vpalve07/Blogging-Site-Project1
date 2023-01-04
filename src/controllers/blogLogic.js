@@ -1,15 +1,37 @@
 const { default: mongoose } = require('mongoose')
 const authorModel = require('../models/authorModel')
 const blogModel = require('../models/blogModel')
+const jwt = require('jsonwebtoken')
 
 const author = async function (req, res) {
     try {
         let data = req.body
-        let createdAuthor = await authorModel.create(data)
-        res.status(201).send({ status: true, data: createdAuthor })
+        let password = data.password
+        let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/
+        if (password.match(passwordRegex)) {                                          // should contain at least one digit
+            let createdAuthor = await authorModel.create(data)                      // should contain at least one lower case
+            res.status(201).send({ status: true, data: createdAuthor })             // should contain at least one upper case
+        } else {                                                                      // should contain at least 8 from the mentioned characters
+            res.status(400).send({ status: false, msg: "Invalid password format" })
+        }
     } catch (error) {
         res.status(400).send({ status: false, errorType: error.name, errorMsg: error.message })
     }
+}
+
+const login = async function (req, res) {
+    try {
+        let data = req.body
+        let findAuthor = await authorModel.findOne({ email: data.email, password: data.password })
+        if (!findAuthor) return res.status(400).send({ status: false, msg: "credentials dont match" })
+        let payload = { authorId: findAuthor._id.toString(), emailId: findAuthor.emailId }
+        let token = jwt.sign(payload, "blogGroup17")
+        res.status(200).send({ status: true, generatedToken: token })
+    }
+    catch (error) {
+        res.status(500).send({ errorType: error.name, errrorMsg: error.message })
+    }
+
 }
 
 const blog = async function (req, res) {
@@ -30,6 +52,7 @@ const blog = async function (req, res) {
 const getBlogs = async function (req, res) {
     try {
         let queryParams = req.query
+        if (Object.keys(queryParams).length == 0) return res.status(400).send({ status: false, msg: "please provide blog details" })
         let blogs = await blogModel.find({ $and: [{ isDeleted: false }, { isPublished: true }, queryParams] })
         if (blogs.length == 0) return res.status(404).send({ status: false, Status: false, msg: "Blogs doesn't exist" })
         res.status(200).send({ status: true, ActiveBlogs: blogs })
@@ -48,18 +71,19 @@ const updateBlog = async function (req, res) {
             let subcategory = data.subcategory
             let updateDoc1 = await blogModel.find({ _id: blogId })
             let updateTags = updateDoc1[0].tags
-            for (let i of bodyTags) {
-                updateTags.push(i)
+            if (bodyTags) {
+                updateTags.push(bodyTags)
+                let newDocTags = await blogModel.findOneAndUpdate({ _id: blogId }, { tags: updateTags }, { new: true })
             }
             let updateSubcategories = updateDoc1[0].subcategory
-            for (let i of subcategory) {
-                updateSubcategories.push(i)
+            if (subcategory) {
+                updateSubcategories.push(subcategory)
+                let newDocSubcategory = await blogModel.findOneAndUpdate({ _id: blogId }, { subcategory: updateSubcategories }, { new: true })
             }
-            let newDoc = await blogModel.findOneAndUpdate({ _id: blogId }, { tags: updateTags, subcategory: updateSubcategories }, { new: true })
         }
         if (data.title || data.body) {
             let updateDoc = await blogModel.findOneAndUpdate({ _id: blogId }, { title: data.title, body: data.body }, { new: true })
-            if (!updateDoc) return res.status(400).send({ status: false, Null: "Doc not find" })
+            if (!updateDoc) return res.status(400).send({ status: false, Msg: "Doc not find" })
         }
         let newUpdatedDoc = await blogModel.findById(blogId)
         if (newUpdatedDoc.isPublished == false) {
@@ -77,7 +101,7 @@ const deleteBlog = async function (req, res) {
     try {
         let blogId = req.params.blogId
         let deleteDoc = await blogModel.findOneAndUpdate({ _id: blogId, isDeleted: false }, { deletedAt: Date.now(), isDeleted: true }, { new: true })
-        if(!deleteDoc) return res.status(404).send({status:false,msg:"Document not found"})
+        if (!deleteDoc) return res.status(404).send({ status: false, msg: "Document not found" })
         res.status(200).send({ status: true, msg: "Document deleted successfully" })
     } catch (error) {
         res.status(500).send({ status: false, ErrorType: error.name, ErrorMsg: error.message })
@@ -86,13 +110,18 @@ const deleteBlog = async function (req, res) {
 
 const deleteByQuery = async function (req, res) {
     try {
-        let queryParams = req.query
-        let deleteDoc = await blogModel.findOneAndUpdate({ $or: [queryParams, { tags: queryParams.tags }, { subcategory: queryParams.subcategory }] }, { deletedAt: Date.now(), isDeleted: true }, { new: true })
-        if (!deleteDoc) return res.status(404).send({ status: false, msg: "Document not found" })
-        return res.status(200).send({ status: true, deletedDoc: deleteDoc })
+        const result = req.query;
+        const deleteBlog = await blogModel.findOneAndUpdate(
+          { ...result, isDeleted: false },
+          { $set: { deletedAt: Date.now(), isDeleted: true } },
+          { new: true }
+        );
+        if (!deleteBlog)
+          return res.status(404).send({ status: false, msg: "docs not found" });
+        res.status(200).send({ status: true, Msg: "Doc deleted successfully" });
     } catch (error) {
         res.status(500).send({ status: false, ErrorType: error.name, ErrorMsg: error.message })
     }
 }
 
-module.exports = { author, blog, getBlogs, updateBlog, deleteBlog, deleteByQuery }
+module.exports = { author, blog, getBlogs, updateBlog, deleteBlog, deleteByQuery, login }
