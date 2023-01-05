@@ -84,7 +84,7 @@ const updateBlog = async function (req, res) {
         let data = req.body
         if (Object.keys(data).length == 0) return res.status(400).send({ status: false, msg: "request body cant be empty" })
         let {title,body,tags,subcategory} = data
-        let finalData = await blogModel.findOneAndUpdate({_id:req.params.blogId},{$set:{title:title,body:body},$push:{tags:tags,subcategory:subcategory}},{new:true})
+        let finalData = await blogModel.findOneAndUpdate({_id:req.params.blogId,isDeleted:false},{$set:{title:title,body:body},$push:{tags:tags,subcategory:subcategory}},{new:true})
         if(!finalData) return res.status(400).send({status:false,msg:"Document not found for update"})
         res.status(200).send({status:true,data:finalData})
     } catch (error) {
