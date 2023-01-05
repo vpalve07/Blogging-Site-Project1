@@ -17,6 +17,8 @@ const author = async function (req, res) {
         if (!titleEnum.includes(data.title)) {
            return res.status(400).send({ status: false, msg: "title should be Mr, Mrs or Miss" })
         }
+        let findEmail = await authorModel.findOne({email:email})
+        if(findEmail) return res.status(403).send({status:false,msg:"Email Id is already exist"})
         let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/
         if (password.match(passwordRegex)) {                                            // should contain at least one digit
             let createdAuthor = await authorModel.create(data)                          // should contain at least one lower case

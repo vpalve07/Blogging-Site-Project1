@@ -32,12 +32,8 @@ const authorId = function (req, res, next) {
 }
 
 const blogId = function (req, res, next) {
-    try {
-        if (!mongoose.isValidObjectId(req.params.blogId)) return res.status(400).send({ status: false, IdAbsent: "BlogId is not Valid" })
-        next()
-    } catch (error) {
-        res.status(500).send({ status: false, errorType: error.name, errorMsg: error.message })
-    }
+    if (!mongoose.isValidObjectId(req.params.blogId)) return res.status(400).send({ status: false, IdAbsent: "BlogId is not Valid" })
+    next()
 }
 
 const validateToken = function (req, res, next) {
@@ -56,12 +52,8 @@ const validateToken = function (req, res, next) {
 }
 
 const authorizeAuthorCreate = function (req, res, next) {
-    try {
-        if (req.decode.authorId !== req.body.authorId) return res.status(403).send({ status: false, msg: "You are not authorized to do this task" })
-        next()
-    } catch (error) {
-        res.status(500).send({ status: false, errorType: error.name, errorMsg: error.message })
-    }
+    if (req.decode.authorId !== req.body.authorId) return res.status(403).send({ status: false, msg: "You are not authorized to do this task" })
+    next()
 }
 
 const authorizeAuthorUpdateDelete = async function (req, res, next) {
