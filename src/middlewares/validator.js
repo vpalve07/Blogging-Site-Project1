@@ -6,7 +6,7 @@ const emailValidate = function (req, res, next) {
     try {
         if (Object.keys(req.body).length == 0) return res.status(400).send({ status: false, msg: "request body cant be empty" })
         let email = req.body.email
-        if (!email) return res.status(400).send({ status: false, emptyEmail: "Email is not present" })
+        if (!email) return res.status(400).send({ status: false, msg: "Email is not present" })
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
         if (email.match(emailRegex)) {
             next()
