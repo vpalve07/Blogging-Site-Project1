@@ -8,7 +8,7 @@ router.get("/test-me", function (req, res) {
 })
 
 
-router.post("/author", emailValidate, author)
+router.post("/authors", emailValidate, author)
 router.post("/login", login)
 router.post("/blogs", validateToken, authorId, authorizeAuthorCreate, blog)
 router.get("/blogs", validateToken, getBlogs)
