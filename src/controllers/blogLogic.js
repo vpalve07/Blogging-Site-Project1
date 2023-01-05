@@ -107,7 +107,6 @@ const deleteByQuery = async function (req, res) {
         const result = req.query
         if(result.authorId) if(!mongoose.isValidObjectId(result.authorId)) return res.status(400).send({status:false,msg:"AuthorId is invalid"})
         let decodedToken = jwt.verify(req.headers['x-api-key'],'blogGroup17')
-        console.log(decodedToken)
         let authorizeAuthor = await blogModel.findOne({$and:[{authorId:decodedToken.authorId},{...result}]})
         if(!authorizeAuthor) return res.status(403).send({status:false,msg:"Author Doc not found"})
         const deleteBlog = await blogModel.findOneAndUpdate({authorId:decodedToken.authorId, ...result, isDeleted: false }, { $set: { deletedAt: Date.now(), isDeleted: true } }, { new: true });
