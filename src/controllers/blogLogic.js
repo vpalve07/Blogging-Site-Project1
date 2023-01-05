@@ -12,7 +12,6 @@ const author = async function (req, res) {
         if (!lname) return res.status(400).send({ status: false, msg: "lname is mandatory" })
         if (!title) return res.status(400).send({ status: false, msg: "title is mandatory" })
         if (!password) return res.status(400).send({ status: false, msg: "password is mandatory" })
-        if (!email) return res.status(400).send({ status: false, msg: "email is mandatory" })
         let titleEnum = authorModel.schema.obj.title.enum
         if (!titleEnum.includes(data.title)) {
            return res.status(400).send({ status: false, msg: "title should be Mr, Mrs or Miss" })
