@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const blogModel = require('../models/blogModel')
 
 const emailValidate = function (req, res, next) {
+    if(Object.keys(req.body).length == 0) return res.status(400).send({status:false,msg:"request body cant be empty"})
     let email = req.body.email
     if (!email) return res.status(400).send({ status: false, emptyEmail: "Email is not present" })
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -15,7 +16,7 @@ const emailValidate = function (req, res, next) {
 
 const authorId = function (req, res, next) {
     let data = req.body
-    if (Object.keys(data) == 0) return res.status(404).send({ status: false, msg: "request body cant be empty" })
+    if (Object.keys(data).length == 0) return res.status(404).send({ status: false, msg: "request body cant be empty" })
     let authorId = data.authorId
     if (!authorId) return res.status(400).send({ status: false, msg: "authorId is mandatory" })
     if (!mongoose.isValidObjectId(authorId)) return res.status(400).send({ status: false, IdAbsent: "authorId is not Valid" })

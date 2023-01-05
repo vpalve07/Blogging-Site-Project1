@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken')
 const author = async function (req, res) {
     try {
         let data = req.body
-        if (Object.keys(data) == 0) return res.status(404).send({ status: false, msg: "request body cant be empty" })
+        if (Object.keys(data).length == 0) return res.status(404).send({ status: false, msg: "request body cant be empty" })
         let { fname, lname, title, password, email } = data
         if (!fname) return res.status(400).send({ status: false, msg: "fname is mandatory" })
         if (!lname) return res.status(400).send({ status: false, msg: "lname is mandatory" })
@@ -30,7 +30,7 @@ const author = async function (req, res) {
 const login = async function (req, res) {
     try {
         let data = req.body
-        if (Object.keys(data) == 0) return res.status(404).send({ status: false, msg: "request body cant be empty" })
+        if (Object.keys(data).length == 0) return res.status(404).send({ status: false, msg: "request body cant be empty" })
         let { password, email } = data
         if (!password) return res.status(400).send({ status: false, msg: "password is mandatory" })
         if (!email) return res.status(400).send({ status: false, msg: "email is mandatory" })
@@ -49,7 +49,7 @@ const login = async function (req, res) {
 const blog = async function (req, res) {
     try {
         let data = req.body
-        if (Object.keys(data) == 0) return res.status(404).send({ status: false, msg: "request body cant be empty" })
+        if (Object.keys(data).length == 0) return res.status(404).send({ status: false, msg: "request body cant be empty" })
         let { title, body, category, authorId } = data
         if (!title) return res.send({ status: false, msg: "title is mandatory" })
         if (!body) return res.send({ status: false, msg: "body is mandatory" })
@@ -81,7 +81,7 @@ const getBlogs = async function (req, res) {
 const updateBlog = async function (req, res) {
     try {
         let data = req.body
-        if (Object.keys(data) == 0) return res.status(404).send({ status: false, msg: "request body cant be empty" })
+        if (Object.keys(data).length == 0) return res.status(404).send({ status: false, msg: "request body cant be empty" })
         let {title,body,tags,subcategory} = data
         let finalData = await blogModel.findOneAndUpdate({_id:req.params.blogId},{$set:{title:title,body:body},$push:{tags:tags,subcategory:subcategory}},{new:true})
         if(!finalData) return res.status(404).send({status:false,msg:"Document not found for update"})
